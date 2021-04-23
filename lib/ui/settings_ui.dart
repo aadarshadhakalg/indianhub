@@ -37,7 +37,7 @@ class SettingsUI extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: Text('Reffered Users'),
+          title: Text('Reffer & Earn'),
           trailing: ElevatedButton(
             onPressed: () {
               Get.to(ReferredUsers());

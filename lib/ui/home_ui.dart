@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../controllers/controllers.dart';
 import 'components/components.dart';
@@ -28,7 +29,7 @@ class HomeUI extends StatelessWidget {
               appBar: AppBar(
                 title: Text(
                   'IndianHUB',
-                  style: TextStyle(fontSize: 22.0),
+                  style: TextStyle(fontSize: 20.0),
                 ),
                 actions: [
                   IconButton(
