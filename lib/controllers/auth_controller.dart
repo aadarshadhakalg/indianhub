@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:indianhub/controllers/referral_controller.dart';
+import 'package:indianhub/helpers/firestore_helper.dart';
 import '../models/models.dart';
 import '../ui/auth/auth.dart';
 import '../ui/ui.dart';
@@ -18,6 +19,7 @@ class AuthController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   TextEditingController referralCodeController = TextEditingController();
   final ReferralController referralController = ReferralController.to;
+  final FireStoreHelper _fireStoreHelper = FireStoreHelper();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   Rxn<User> firebaseUser = Rxn<User>();
@@ -134,9 +136,9 @@ class AuthController extends GetxController {
           );
           //create the user in firestore
           _createUserFirestore(_newUser, result.user!);
-          await referralController.addReferralCode(result.user!.uid, referral);
+          await _fireStoreHelper.addReferralCode(result.user!.uid, referral);
           if(referralCodeController.text.replaceAll(' ', '').length != 0){
-          await referralController.updateReferral(referralCodeController.text.replaceAll(' ', ''), result.user!.uid);
+          await _fireStoreHelper.useRefferalCode(referralCodeController.text.replaceAll(' ', ''), result.user!.uid);
           }
           emailController.clear();
           passwordController.clear();
@@ -161,10 +163,6 @@ class AuthController extends GetxController {
           backgroundColor: Get.theme.snackBarTheme.backgroundColor,
           colorText: Get.theme.snackBarTheme.actionTextColor);
     }
-  }
-
-  Future<String> generateReferralCode(String email) async {
-    return '';
   }
 
   //handles updating the user when updating profile

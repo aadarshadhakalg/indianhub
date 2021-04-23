@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:indianhub/controllers/controllers.dart';
-import 'package:indianhub/controllers/referral_controller.dart';
+import 'package:indianhub/helpers/firestore_helper.dart';
 import 'package:indianhub/models/user_model.dart';
-import 'package:indianhub/ui/components/components.dart';
 
 class ReferredUsers extends StatelessWidget {
-  final ReferralController referralController = ReferralController.to;
+  final FireStoreHelper _fireStoreHelper = FireStoreHelper();
   final AuthController _authController = AuthController.to;
 
   @override
@@ -15,7 +14,7 @@ class ReferredUsers extends StatelessWidget {
         title: Text('Reffered Users'),
       ),
       body: FutureBuilder(
-          future: referralController
+          future: _fireStoreHelper
               .getReferredUsers(_authController.firestoreUser.value!.referral),
           builder:
               (BuildContext context, AsyncSnapshot<List<UserModel>> snapshot) {
