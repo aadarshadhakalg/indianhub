@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1034138581345",
+    "project_id": "betting-1541a",
+    "storage_bucket": "betting-1541a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034138581345:android:f2723945b05cacf12c6d20",
+        "android_client_info": {
+          "package_name": "np.com.aadarshadhakal.indianhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034138581345-k3p7i5t78o3pkgit27fjs9jti4t979bv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0yfc95MKxuv7vB6iXu7ifwBPicp7DokU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034138581345-k3p7i5t78o3pkgit27fjs9jti4t979bv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
