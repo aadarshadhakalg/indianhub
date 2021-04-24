@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:indianhub/ui/drawer.dart';
 import '../controllers/controllers.dart';
 import 'components/components.dart';
 import 'ui.dart';
@@ -22,7 +23,8 @@ class HomeUI extends StatelessWidget {
                       currentAccountPicture: Avatar(controller.firestoreUser.value!),
                       accountName: Text(controller.firestoreUser.value!.name),
                       accountEmail: Text('Balance : ' + controller.firestoreUser.value!.points.toString()),
-                    )
+                    ),
+                    DrawerWidgets(),
                   ],
                 ),
               ),
@@ -43,7 +45,6 @@ class HomeUI extends StatelessWidget {
                 child: Column(
                   children: <Widget>[
                     SizedBox(height: 120),
-                    Avatar(controller.firestoreUser.value!),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,

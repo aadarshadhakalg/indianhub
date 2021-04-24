@@ -7,6 +7,7 @@ import 'package:indianhub/controllers/referral_controller.dart';
 import 'package:indianhub/constants/constants.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:indianhub/controllers/transaction_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ void main() async {
   Get.put<ReferralController>(ReferralController());
   Get.put<AuthController>(AuthController());
   Get.put<ThemeController>(ThemeController());
+  Get.put<TransactionController>(TransactionController());
   runApp(MyApp());
 }
 

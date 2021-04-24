@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:indianhub/controllers/referral_controller.dart';
+import 'package:indianhub/controllers/theme_controller.dart';
 import 'package:indianhub/helpers/firestore_helper.dart';
 import '../models/models.dart';
 import '../ui/auth/auth.dart';
@@ -46,17 +47,16 @@ class AuthController extends GetxController {
 
   handleAuthChanged(_firebaseUser) async {
     //get user data from firestore
-    if (_firebaseUser?.uid != null) {
-      firestoreUser.bindStream(streamFirestoreUser());
-      await isAdmin();
-    }
 
-    if (_firebaseUser == null) {
-      print('Send to signin');
-      Get.offAll(SignInUI());
-    } else {
-      Get.offAll(HomeUI());
-    }
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user == null) {
+        Get.offAll(SignInUI());
+      } else {
+        firestoreUser.bindStream(streamFirestoreUser());
+        await isAdmin();
+        Get.offAll(HomeUI());
+      }
+    });
   }
 
   // Firebase user one-time fetch
@@ -69,12 +69,10 @@ class AuthController extends GetxController {
   Stream<UserModel?> streamFirestoreUser() {
     print('streamFirestoreUser()');
 
-    
-      return  _db
+    return _db
         .doc('/users/${firebaseUser.value!.uid}')
         .snapshots()
         .map((snapshot) => UserModel?.fromMap(snapshot.data()!));
-
   }
 
   //get the firestore user from the firestore collection
@@ -137,8 +135,10 @@ class AuthController extends GetxController {
           //create the user in firestore
           _createUserFirestore(_newUser, result.user!);
           await _fireStoreHelper.addReferralCode(result.user!.uid, referral);
-          if(referralCodeController.text.replaceAll(' ', '').length != 0){
-          await _fireStoreHelper.useRefferalCode(referralCodeController.text.replaceAll(' ', ''), result.user!.uid);
+          if (referralCodeController.text.replaceAll(' ', '').length != 0) {
+            await _fireStoreHelper.useRefferalCode(
+                referralCodeController.text.replaceAll(' ', ''),
+                result.user!.uid);
           }
           emailController.clear();
           passwordController.clear();
@@ -151,7 +151,7 @@ class AuthController extends GetxController {
             duration: Duration(seconds: 10),
             backgroundColor: Get.theme.snackBarTheme.backgroundColor,
             colorText: Get.theme.snackBarTheme.actionTextColor);
-      } catch(e){
+      } catch (e) {
         hideLoadingIndicator();
         print(e);
       }
@@ -258,6 +258,8 @@ class AuthController extends GetxController {
     nameController.clear();
     emailController.clear();
     passwordController.clear();
+    firestoreUser.value = null;
+    ThemeController.to.clearThemeMode();
     return _auth.signOut();
   }
 }

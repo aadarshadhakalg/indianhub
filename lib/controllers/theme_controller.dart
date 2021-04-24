@@ -33,6 +33,13 @@ class ThemeController extends GetxController {
     return _setThemeMode;
   }
 
+  clearThemeMode() async {
+    _themeMode = getThemeModeFromString('system');
+    Get.changeThemeMode(_themeMode);
+    await store.write('theme', 'system');
+    update();
+  }
+
   getThemeModeFromStore() async {
     String _themeString = store.read('theme') ?? 'system';
     setThemeMode(_themeString);

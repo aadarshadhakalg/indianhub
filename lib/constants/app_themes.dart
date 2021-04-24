@@ -145,6 +145,14 @@ class AppThemes {
       fillColor: _lightBackgroundSecondaryColor,
       //focusColor: _lightBorderActiveColor,
     ),
+    dividerColor: _lightTextColor,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith(
+              (states) => _lightBackgroundColor),
+          foregroundColor:
+              MaterialStateProperty.resolveWith((states) => _lightTextColor)),
+    ),
   );
 
 //text theme for dark theme
@@ -188,6 +196,7 @@ class AppThemes {
       iconTheme: IconThemeData(color: _darkTextColor),
       textTheme: _darkTextTheme,
     ),
+    cardTheme: CardTheme(color: _darkBackgroundColor),
     colorScheme: ColorScheme.dark(
       primary: _darkPrimaryColor,
       primaryVariant: _darkBackgroundColor,
@@ -236,6 +245,14 @@ class AppThemes {
       ),
       fillColor: _darkInputFillColor,
       //focusColor: _darkBorderActiveColor,
+    ),
+    dividerColor: _darkTextColor,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith(
+              (states) => _darkBackgroundColor),
+          foregroundColor:
+              MaterialStateProperty.resolveWith((states) => _darkTextColor)),
     ),
   );
 }

@@ -1,7 +1,11 @@
 // matching various patterns for kinds of data
 
 
+import 'package:indianhub/controllers/controllers.dart';
+
 class Validator {
+
+  final AuthController _authController = AuthController.to;
   Validator();
 
   String? email(String? value) {
@@ -17,7 +21,7 @@ class Validator {
     String pattern = r'^.{6,}$';
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value!))
-      return 'validator.password';
+      return 'Invalid Password. Password must be more than 6 character long';
     else
       return null;
   }
@@ -26,7 +30,7 @@ class Validator {
     String pattern = r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$";
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value!))
-      return 'validator.name';
+      return 'Not a valid name';
     else
       return null;
   }
@@ -40,7 +44,7 @@ class Validator {
     String pattern = r'^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$';
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value!))
-      return 'validator.number';
+      return 'Number Field';
     else
       return null;
   }
@@ -49,8 +53,12 @@ class Validator {
     String pattern = r'^\d+$';
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value!))
-      return 'validator.amount';
-    else
+      return 'You must specify amount';
+    else if(int.parse(value) <= 0){
+      return 'Amount must be greater than 0';
+    } else if(_authController.firestoreUser.value!.points! < int.parse(value)){
+      return 'Insufficient Balance';
+    }
       return null;
   }
 
@@ -58,7 +66,7 @@ class Validator {
     String pattern = r'^\S+$';
     RegExp regex = RegExp(pattern);
     if (!regex.hasMatch(value!))
-      return 'validator.notEmpty';
+      return 'This field is required';
     else
       return null;
   }

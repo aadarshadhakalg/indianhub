@@ -50,7 +50,9 @@ class ReferredUsers extends StatelessWidget {
             height: 10.0,
           ),
           Divider(),
-          Center(child: Text('Your Referred Users'),),
+          Center(
+            child: Text('Your Referred Users'),
+          ),
           Divider(),
           Expanded(
             child: FutureBuilder(
