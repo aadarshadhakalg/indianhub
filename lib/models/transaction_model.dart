@@ -37,7 +37,7 @@ class TransactionModel {
       transactionMedium: data['transactionMedium'],
       transactionId: data['transactionId'] ?? 'Empty',
       transactionTime: data['transactionTime'] ?? 'Not Provided',
-      date: data['date'].toDate(),
+      date: DateTime.fromMillisecondsSinceEpoch(data['date']),
     );
   }
 

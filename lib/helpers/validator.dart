@@ -56,6 +56,17 @@ class Validator {
       return 'You must specify amount';
     else if(int.parse(value) <= 0){
       return 'Amount must be greater than 0';
+    }
+      return null;
+  }
+
+  String? withdrawlAmount(String? value) {
+    String pattern = r'^\d+$';
+    RegExp regex = RegExp(pattern);
+    if (!regex.hasMatch(value!))
+      return 'You must specify amount';
+    else if(int.parse(value) <= 0){
+      return 'Amount must be greater than 0';
     } else if(_authController.firestoreUser.value!.points! < int.parse(value)){
       return 'Insufficient Balance';
     }

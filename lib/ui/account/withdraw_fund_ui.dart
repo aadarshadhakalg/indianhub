@@ -28,7 +28,7 @@ class WithdrawFund extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     iconPrefix: Icons.attach_money_rounded,
                     labelText: 'Amount',
-                    validator: Validator().amount,
+                    validator: Validator().withdrawlAmount,
                     onChanged: (value) => null,
                     onSaved: (value) =>
                         controller.withdrawAmountController.text = value!,

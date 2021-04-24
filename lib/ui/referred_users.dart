@@ -50,8 +50,20 @@ class ReferredUsers extends StatelessWidget {
             height: 10.0,
           ),
           Divider(),
-          Center(
-            child: Text('Your Referred Users'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text('Your Referred Users'),
+              FutureBuilder(
+                  future: _fireStoreHelper.getBonusEarned(
+                      _authController.firestoreUser.value!.referral),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text('Bonus Earned: ${snapshot.data}');
+                    }
+                    return Container();
+                  })
+            ],
           ),
           Divider(),
           Expanded(
