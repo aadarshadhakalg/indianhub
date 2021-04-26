@@ -5,6 +5,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:indianhub/controllers/controllers.dart';
 import 'package:indianhub/controllers/success_ui.dart';
 import 'package:indianhub/helpers/firestore_helper.dart';
+import 'package:indianhub/models/user_model.dart';
 
 enum TransactionStates { Loading, Normal }
 
@@ -21,6 +22,7 @@ class TransactionController extends GetxController {
   Rx<String> selectedWithdrawlMethod = Rx<String>('Paytm');
   Rx<String> selectedLoadMethod = Rx<String>('Paytm');
   TextEditingController withdrawAmountController = TextEditingController();
+  TextEditingController withdrawAccountIdController = TextEditingController();
   TextEditingController loadAmountController = TextEditingController();
   TextEditingController transactionIdController = TextEditingController();
   TextEditingController transactionTimeController = TextEditingController();
@@ -58,14 +60,19 @@ class TransactionController extends GetxController {
     currentState.value = TransactionStates.Loading;
 
     try {
+      Map oldModelData = _authController.firestoreUser.value!.toJson();
+      oldModelData['points'] = oldModelData['points'] - int.parse(withdrawAmountController.text);
+      _fireStoreHelper.updateUser(UserModel.fromMap(oldModelData));
       _fireStoreHelper.addTransaction(
         amount: int.parse(withdrawAmountController.text),
         date: DateTime.now(),
         transactionMedium: selectedWithdrawlMethod.value,
         type: 'withdraw',
         uid: _authController.firestoreUser.value!.uid,
+        withdrawlAccount: withdrawAccountIdController.text,
       );
       withdrawAmountController.text = '';
+      withdrawAccountIdController.text = '';
       currentState.value = TransactionStates.Normal;
       Get.to(SuccessPage(message: 'Success'));
     } catch (e) {

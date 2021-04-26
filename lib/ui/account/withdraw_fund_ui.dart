@@ -24,6 +24,17 @@ class WithdrawFund extends StatelessWidget {
                 children: [
                   FormVerticalSpace(),
                   FormInputFieldWithIcon(
+                    controller: controller.withdrawAccountIdController,
+                    iconPrefix: Icons.credit_card,
+                    labelText: 'Your Id',
+                    validator: Validator().notEmpty,
+                    onChanged: (value) => null,
+                    onSaved: (value) =>
+                        controller.withdrawAccountIdController.text = value!,
+                    maxLines: 1,
+                  ),
+                  FormVerticalSpace(),
+                  FormInputFieldWithIcon(
                     controller: controller.withdrawAmountController,
                     keyboardType: TextInputType.number,
                     iconPrefix: Icons.attach_money_rounded,

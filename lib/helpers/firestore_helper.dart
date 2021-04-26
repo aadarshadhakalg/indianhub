@@ -8,9 +8,17 @@ class FireStoreHelper {
   ///Users Helper
   ///
   ///
-  
-  Future<UserModel> getLoggedUser(String uid)async{
-    return _db.collection('users').doc(uid).get().then((value) => UserModel.fromMap(value.data()!));
+
+  Future<UserModel> getLoggedUser(String uid) async {
+    return _db
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then((value) => UserModel.fromMap(value.data()!));
+  }
+
+  Future<void> updateUser(UserModel model) async {
+    await _db.collection('users').doc(model.uid).update(model.toJson());
   }
 
   /// Referral Helpers
@@ -23,7 +31,7 @@ class FireStoreHelper {
       'user': uid,
       'referredUsers': [],
       'waitingForBonus': [],
-      'bonusEarned':0,
+      'bonusEarned': 0,
     });
   }
 
@@ -45,7 +53,7 @@ class FireStoreHelper {
     waitingForBonus.add(referredUserId.toString());
     await _db.collection('referralcodes').doc(documentid).update({
       'referredUsers': referredUsers,
-      'waitingForBonus':waitingForBonus,
+      'waitingForBonus': waitingForBonus,
     });
   }
 
@@ -69,9 +77,7 @@ class FireStoreHelper {
     return allReferredUsers;
   }
 
-
   Future<int> getBonusEarned(String referralCode) async {
-
     QuerySnapshot referralcodes = await _db
         .collection('referralcodes')
         .where('code', isEqualTo: referralCode)
@@ -83,10 +89,6 @@ class FireStoreHelper {
 
     return referralCodeData?['bonusEarned'];
   }
-
-  
-
-
 
   /// Transaction Helpers
   ///
@@ -101,6 +103,7 @@ class FireStoreHelper {
     required String transactionMedium,
     String? transactionId,
     String? transactionTime,
+    String? withdrawlAccount,
     required DateTime date,
   }) async {
     await _db.collection('transactions').add({
@@ -112,13 +115,17 @@ class FireStoreHelper {
       'transactionMedium': transactionMedium,
       'transactionId': transactionId,
       'transactionTime': transactionTime,
+      'withdrawlAccount': withdrawlAccount,
       'date': DateTime.now().millisecondsSinceEpoch,
     });
   }
 
   Future<List<TransactionModel>> getMyTransactions(String uid) async {
-    QuerySnapshot querySnapshot =
-        await _db.collection('transactions').where('uid', isEqualTo: uid).orderBy('date',descending: true).get();
+    QuerySnapshot querySnapshot = await _db
+        .collection('transactions')
+        .where('uid', isEqualTo: uid)
+        .orderBy('date', descending: true)
+        .get();
 
     List<TransactionModel> allTransactions = [];
 

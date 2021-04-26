@@ -1,9 +1,9 @@
 //Transaction Model
 
-class TransactionModel {
-  final String id;
-  final String type;
-  final int amount;
+class MatchModel {
+  final String teamAname;
+  final String teamBname;
+  final int team;
   final String uid;
   final String status;
   final String? response;
