@@ -5,6 +5,14 @@ import 'package:indianhub/models/user_model.dart';
 class FireStoreHelper {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  ///Users Helper
+  ///
+  ///
+  
+  Future<UserModel> getLoggedUser(String uid)async{
+    return _db.collection('users').doc(uid).get().then((value) => UserModel.fromMap(value.data()!));
+  }
+
   /// Referral Helpers
   ///
   /// Help with CRUD of referral datas and all
@@ -63,7 +71,6 @@ class FireStoreHelper {
 
 
   Future<int> getBonusEarned(String referralCode) async {
-    List<UserModel> allReferredUsers = [];
 
     QuerySnapshot referralcodes = await _db
         .collection('referralcodes')
@@ -76,6 +83,8 @@ class FireStoreHelper {
 
     return referralCodeData?['bonusEarned'];
   }
+
+  
 
 
 

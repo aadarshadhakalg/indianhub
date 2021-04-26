@@ -19,68 +19,77 @@ class UpdateProfileUI extends StatelessWidget {
         authController.firestoreUser.value!.email;
     return Scaffold(
       appBar: AppBar(title: Text('auth.updateProfileTitle')),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  LogoGraphicHeader(),
-                  SizedBox(height: 48.0),
-                  FormInputFieldWithIcon(
-                    controller: authController.nameController,
-                    iconPrefix: Icons.person,
-                    labelText: 'auth.nameFormField',
-                    validator: Validator().name,
-                    onChanged: (value) => null,
-                    onSaved: (value) =>
-                        authController.nameController.text = value!,
-                  ),
-                  FormVerticalSpace(),
-                  FormInputFieldWithIcon(
-                    controller: authController.emailController,
-                    iconPrefix: Icons.email,
-                    labelText: 'auth.emailFormField',
-                    validator: Validator().email,
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) => null,
-                    onSaved: (value) =>
-                        authController.emailController.text = value!,
-                  ),
-                  FormVerticalSpace(),
-                  PrimaryButton(
-                      labelText: 'auth.updateUser',
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          SystemChannels.textInput
-                              .invokeMethod('TextInput.hide');
-                          UserModel _updatedUser = UserModel(
-                              uid: authController.firestoreUser.value!.uid,
-                              name: authController.nameController.text,
-                              email: authController.emailController.text,
-                              photoUrl:
-                                  authController.firestoreUser.value!.photoUrl,
-                              referral: authController.firestoreUser.value!.referral,
+      body: GetX(builder: (AuthController controller) {
+        if (controller.currentState.value == AuthStates.Normal) {
+          return Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      LogoGraphicHeader(),
+                      SizedBox(height: 48.0),
+                      FormInputFieldWithIcon(
+                        controller: authController.nameController,
+                        iconPrefix: Icons.person,
+                        labelText: 'auth.nameFormField',
+                        validator: Validator().name,
+                        onChanged: (value) => null,
+                        onSaved: (value) =>
+                            authController.nameController.text = value!,
+                      ),
+                      FormVerticalSpace(),
+                      FormInputFieldWithIcon(
+                        controller: authController.emailController,
+                        iconPrefix: Icons.email,
+                        labelText: 'auth.emailFormField',
+                        validator: Validator().email,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) => null,
+                        onSaved: (value) =>
+                            authController.emailController.text = value!,
+                      ),
+                      FormVerticalSpace(),
+                      PrimaryButton(
+                          labelText: 'auth.updateUser',
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              SystemChannels.textInput
+                                  .invokeMethod('TextInput.hide');
+                              UserModel _updatedUser = UserModel(
+                                uid: authController.firestoreUser.value!.uid,
+                                name: authController.nameController.text,
+                                email: authController.emailController.text,
+                                photoUrl: authController
+                                    .firestoreUser.value!.photoUrl,
+                                referral: authController
+                                    .firestoreUser.value!.referral,
                               );
-                          _updateUserConfirm(context, _updatedUser,
-                              authController.firestoreUser.value!.email);
-                        }
-                      }),
-                  FormVerticalSpace(),
-                  LabelButton(
-                    labelText: 'auth.resetPasswordLabelButton',
-                    onPressed: () => Get.to(ResetPasswordUI()),
+                              _updateUserConfirm(context, _updatedUser,
+                                  authController.firestoreUser.value!.email);
+                            }
+                          }),
+                      FormVerticalSpace(),
+                      LabelButton(
+                        labelText: 'auth.resetPasswordLabelButton',
+                        onPressed: () => Get.to(ResetPasswordUI()),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      }),
     );
   }
 

@@ -13,43 +13,53 @@ class ResetPasswordUI extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(context),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  LogoGraphicHeader(),
-                  SizedBox(height: 48.0),
-                  FormInputFieldWithIcon(
-                    controller: authController.emailController,
-                    iconPrefix: Icons.email,
-                    labelText: 'auth.emailFormField',
-                    validator: Validator().email,
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) => null,
-                    onSaved: (value) =>
-                        authController.emailController.text = value as String,
+      body: GetX(
+        builder: (AuthController controller) {
+          if(controller.currentState.value == AuthStates.Normal){
+          return Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      LogoGraphicHeader(),
+                      SizedBox(height: 48.0),
+                      FormInputFieldWithIcon(
+                        controller: authController.emailController,
+                        iconPrefix: Icons.email,
+                        labelText: 'Your Email Address',
+                        validator: Validator().email,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) => null,
+                        onSaved: (value) =>
+                            authController.emailController.text = value as String,
+                      ),
+                      FormVerticalSpace(),
+                      PrimaryButton(
+                          labelText: 'Send Password Reset Link',
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              await authController.sendPasswordResetEmail(context);
+                            }
+                          }),
+                      FormVerticalSpace(),
+                      signInLink(context),
+                    ],
                   ),
-                  FormVerticalSpace(),
-                  PrimaryButton(
-                      labelText: 'auth.resetPasswordButton',
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          await authController.sendPasswordResetEmail(context);
-                        }
-                      }),
-                  FormVerticalSpace(),
-                  signInLink(context),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+          }else{
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }
       ),
     );
   }
@@ -58,13 +68,13 @@ class ResetPasswordUI extends StatelessWidget {
     if (authController.emailController.text == '') {
       return null;
     }
-    return AppBar(title: Text('auth.resetPasswordTitle'));
+    return AppBar(title: Text('Your Email Address'));
   }
 
   signInLink(BuildContext context) {
     if (authController.emailController.text == '') {
       return LabelButton(
-        labelText: 'auth.signInonResetPasswordLabelButton',
+        labelText: 'Sign In',
         onPressed: () => Get.offAll(SignInUI()),
       );
     }

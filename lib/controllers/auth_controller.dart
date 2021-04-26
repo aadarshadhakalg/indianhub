@@ -4,14 +4,16 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:indianhub/controllers/controllers.dart';
 import 'package:indianhub/controllers/referral_controller.dart';
 import 'package:indianhub/controllers/theme_controller.dart';
 import 'package:indianhub/helpers/firestore_helper.dart';
 import '../models/models.dart';
 import '../ui/auth/auth.dart';
 import '../ui/ui.dart';
-import '../ui/components/components.dart';
 import '../helpers/helpers.dart';
+
+enum AuthStates { Loading, Normal }
 
 class AuthController extends GetxController {
   static AuthController to = Get.find();
@@ -26,6 +28,8 @@ class AuthController extends GetxController {
   Rxn<User> firebaseUser = Rxn<User>();
   Rxn<UserModel> firestoreUser = Rxn<UserModel>();
   final RxBool admin = false.obs;
+
+  Rx<AuthStates> currentState = Rx<AuthStates>(AuthStates.Normal);
 
   @override
   void onReady() async {
@@ -47,7 +51,7 @@ class AuthController extends GetxController {
 
   handleAuthChanged(_firebaseUser) async {
     //get user data from firestore
-
+    //
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user == null) {
         Get.offAll(SignInUI());
@@ -83,16 +87,16 @@ class AuthController extends GetxController {
 
   //Method to handle user sign in using email and password
   signInWithEmailAndPassword(BuildContext context) async {
-    showLoadingIndicator();
+    currentState.value = AuthStates.Loading;
     try {
       await _auth.signInWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim());
       emailController.clear();
       passwordController.clear();
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
     } catch (error) {
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
       Get.snackbar('auth.signInErrorTitle', 'auth.signInError',
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 7),
@@ -103,7 +107,7 @@ class AuthController extends GetxController {
 
   // User registration using email and password
   registerWithEmailAndPassword(BuildContext context) async {
-    showLoadingIndicator();
+    currentState.value = AuthStates.Loading;
     if (await referralController.isValidCode(referralCodeController.text)) {
       try {
         await _auth
@@ -131,6 +135,7 @@ class AuthController extends GetxController {
             isAdmin: false,
             points: 0,
             referral: referral,
+            referredBy: referralCodeController.text,
           );
           //create the user in firestore
           _createUserFirestore(_newUser, result.user!);
@@ -140,23 +145,27 @@ class AuthController extends GetxController {
                 referralCodeController.text.replaceAll(' ', ''),
                 result.user!.uid);
           }
-          emailController.clear();
-          passwordController.clear();
-          hideLoadingIndicator();
+          
         });
+        emailController.clear();
+          passwordController.clear();
+          referralCodeController.clear();
+          currentState.value = AuthStates.Normal;
       } on FirebaseAuthException catch (error) {
-        hideLoadingIndicator();
+        currentState.value = AuthStates.Normal;
+
         Get.snackbar('Signup Error', error.message!,
             snackPosition: SnackPosition.BOTTOM,
             duration: Duration(seconds: 10),
             backgroundColor: Get.theme.snackBarTheme.backgroundColor,
             colorText: Get.theme.snackBarTheme.actionTextColor);
       } catch (e) {
-        hideLoadingIndicator();
+        currentState.value = AuthStates.Normal;
+
         print(e);
       }
     } else {
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
       Get.snackbar('Invalid Code', 'The referral code you used is not valid!',
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 10),
@@ -169,7 +178,7 @@ class AuthController extends GetxController {
   Future<void> updateUser(BuildContext context, UserModel user, String oldEmail,
       String password) async {
     try {
-      showLoadingIndicator();
+      currentState.value = AuthStates.Loading;
       await _auth
           .signInWithEmailAndPassword(email: oldEmail, password: password)
           .then((_firebaseUser) {
@@ -177,7 +186,7 @@ class AuthController extends GetxController {
             .updateEmail(user.email)
             .then((value) => _updateUserFirestore(user, _firebaseUser.user!));
       });
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
       Get.snackbar(
           'auth.updateUserSuccessNoticeTitle', 'auth.updateUserSuccessNotice',
           snackPosition: SnackPosition.BOTTOM,
@@ -187,7 +196,7 @@ class AuthController extends GetxController {
     } on PlatformException catch (error) {
       //List<String> errors = error.toString().split(',');
       // print("Error: " + errors[1]);
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
       print(error.code);
       String authError;
       switch (error.code) {
@@ -220,17 +229,17 @@ class AuthController extends GetxController {
 
   //password reset email
   Future<void> sendPasswordResetEmail(BuildContext context) async {
-    showLoadingIndicator();
+    currentState.value = AuthStates.Loading;
     try {
       await _auth.sendPasswordResetEmail(email: emailController.text);
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
       Get.snackbar('auth.resetPasswordNoticeTitle', 'auth.resetPasswordNotice',
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 5),
           backgroundColor: Get.theme.snackBarTheme.backgroundColor,
           colorText: Get.theme.snackBarTheme.actionTextColor);
     } on FirebaseAuthException catch (error) {
-      hideLoadingIndicator();
+      currentState.value = AuthStates.Normal;
       Get.snackbar('auth.resetPasswordFailed', error.message!,
           snackPosition: SnackPosition.BOTTOM,
           duration: Duration(seconds: 10),

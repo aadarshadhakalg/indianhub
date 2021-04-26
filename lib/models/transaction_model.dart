@@ -1,5 +1,4 @@
 //Transaction Model
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TransactionModel {
   final String id;

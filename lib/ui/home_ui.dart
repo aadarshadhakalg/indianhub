@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:indianhub/ui/drawer.dart';
 import '../controllers/controllers.dart';
@@ -7,10 +6,10 @@ import 'ui.dart';
 import 'package:get/get.dart';
 
 class HomeUI extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AuthController>(
-      init: AuthController(),
+    return GetX<AuthController>(
       builder: (controller) => controller.firestoreUser.value?.uid == null
           ? Center(
               child: CircularProgressIndicator(),
@@ -20,9 +19,11 @@ class HomeUI extends StatelessWidget {
                 child: Column(
                   children: [
                     UserAccountsDrawerHeader(
-                      currentAccountPicture: Avatar(controller.firestoreUser.value!),
+                      currentAccountPicture:
+                          Avatar(controller.firestoreUser.value!),
                       accountName: Text(controller.firestoreUser.value!.name),
-                      accountEmail: Text('Balance : ' + controller.firestoreUser.value!.points.toString()),
+                      accountEmail: Text(
+                          'Balance : ${controller.firestoreUser.value?.points}'),
                     ),
                     DrawerWidgets(),
                   ],

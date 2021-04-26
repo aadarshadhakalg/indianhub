@@ -59,7 +59,7 @@ class ReferredUsers extends StatelessWidget {
                       _authController.firestoreUser.value!.referral),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Text('Bonus Earned: ${snapshot.data}');
+                      return Text('Referral Earned: ${snapshot.data}');
                     }
                     return Container();
                   })
